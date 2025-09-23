@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+
+# Build or output folders
+dist/
+build/
+
+# Docker files (if any temporary)
+tmp/
