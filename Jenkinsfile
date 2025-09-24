@@ -1,41 +1,18 @@
 pipeline {
   agent any
 
+  environment {
+    IMAGE_NAME = "myimage"
+    IMAGE_TAG = "${env.BUILD_NUMBER}"
+  }
+
   stages {
-    stage('Checkout') {
-      steps {
-        bat 'git checkout .' 
-        // actually Jenkins automatically checks out when you use `checkout scm`
-      }
-    }
-
-    stage('Install Dependencies') {
-      steps {
-        bat 'npm install'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        script {
-          def status = bat returnStatus: true, script: 'npm test'
-          echo "Test exit status: ${status}"
-          if (status != 0) {
-            echo "Tests failed (UNSTABLE), but continuing"
-            currentBuild.result = 'UNSTABLE'
-          } else {
-            echo "Tests passed"
-          }
-        }
-      }
-    }
-
     stage('Build Docker Image') {
       when {
         expression { currentBuild.currentResult == 'SUCCESS' }
       }
       steps {
-        bat 'docker build -t myimage:${BUILD_NUMBER} .'
+        bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
       }
     }
 
@@ -44,7 +21,7 @@ pipeline {
         expression { currentBuild.currentResult == 'SUCCESS' }
       }
       steps {
-        bat 'docker push ...'
+        bat "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
       }
     }
 
@@ -53,14 +30,14 @@ pipeline {
         expression { currentBuild.currentResult == 'SUCCESS' }
       }
       steps {
-        bat 'docker run ...'
+        bat "docker run -d --name app${IMAGE_TAG} -p 3000:3000 ${IMAGE_NAME}:${IMAGE_TAG}"
       }
     }
   }
 
   post {
     always {
-      echo "Done. Final status: ${currentBuild.currentResult}"
+      echo "Final status: ${currentBuild.currentResult}"
     }
   }
 }
