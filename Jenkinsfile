@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "myimage"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        DOCKERHUB_USERNAME = "reddichanikya17@gmail.com"
+        DOCKERHUB_USERNAME = "chanikya1218"
         DOCKERHUB_CREDENTIALS_ID = "dockerhub_creds"
     }
 
