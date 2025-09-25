@@ -1,0 +1,52 @@
+# Jenkins Pipeline Demo
+
+This repository demonstrates a full CI/CD pipeline using **Jenkins**, **Docker**, and a simple **Node.js** application.
+
+---
+
+## Project Structure
+
+
+.
+├── Jenkinsfile
+├── Dockerfile
+├── index.js
+├── package.json
+├── .dockerignore
+├── .gitignore
+└── test
+└── sample.test.js
+
+
+---
+
+## How It Works
+
+1. Jenkins checks out the code from GitHub.  
+2. Installs dependencies with `npm install`.  
+3. Runs tests (`npm test`).  
+4. Builds a Docker image tagged as `chanikya1218/myimage:<build_number>`.  
+5. Logs into Docker Hub using credentials stored in Jenkins.  
+6. Pushes the image to Docker Hub.  
+7. Deploys by running a container (removing any previous version).  
+8. Reports final status (SUCCESS / FAILURE).
+
+---
+
+## Prerequisites
+
+- Jenkins server that can run Docker commands  
+- A Jenkins credential (ID: `dockerhub_creds`) with:  
+  - Username: **your Docker Hub username** (not your email)  
+  - Password / Secret: a **Docker Hub Personal Access Token (PAT)** with **read + write + delete** scopes  
+- Docker Hub repository accessible to your account  
+
+---
+
+## Local Testing
+
+To test locally without Jenkins:
+
+```bash
+docker build -t chanikya1218/myimage:local .
+docker run -d -p 3000:3000 chanikya1218/myimage:local
